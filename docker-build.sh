@@ -1,0 +1,1 @@
+docker build api-advances/ -t api_advances:$1
