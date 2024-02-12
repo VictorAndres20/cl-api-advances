@@ -13,6 +13,10 @@ export class EnterpriseService extends BasicCrudService<Enterprise, number, Ente
         protected repo: Repository<Enterprise>,
     ) {super();}
 
+    findAll(): Promise<Enterprise[]> {
+        return this.findMany({ order: { name: 'ASC' } });
+    }
+
     findById(id: number): Promise<Enterprise>{
         try{
             return this.findOne({where: {id:id}});

@@ -1,16 +1,27 @@
-import { Controller, Get, Post, Body, HttpException, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpException, Param, UseGuards, Put, Res, HttpStatus } from '@nestjs/common';
 import { HttpResponse } from '../../../commons/responses/http_response';
+import { Response } from 'express';
 import { BasicRestController } from '../../../commons/controllers/rest.controller';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../entity/user.entity';
 import { UserDTO } from '../entity/user.dto';
-import { UserService } from '../service/user.service';
+import { UserBusiness } from '../service/user.business';
 
 @Controller('user')
 @UseGuards(AuthGuard('jwt'))
 export class UserController extends BasicRestController<User, string, UserDTO>{
 
-    constructor(protected service: UserService){super();}
+    constructor(protected service: UserBusiness){super();}
+
+    @Put('edit/password/:id')
+    async editPassword(@Res() res: Response, @Body() dto: UserDTO, @Param('id') id: string): Promise<void> {
+        try{
+            let data = await this.service.updatePassword(id, dto);
+            res.status(HttpStatus.OK).json(new HttpResponse<User>().setData(data).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<User>().setError(err.message).build(false));
+        }
+    }
 
 }
 

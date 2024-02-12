@@ -1,16 +1,37 @@
-import { Controller, Get, Post, Body, HttpException, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpException, Param, UseGuards, Res, HttpStatus, Put } from '@nestjs/common';
 import { HttpResponse } from '../../../commons/responses/http_response';
 import { BasicRestController } from '../../../commons/controllers/rest.controller';
 import { AuthGuard } from '@nestjs/passport';
 import { Employee } from '../entity/employee.entity';
 import { EmployeeDTO } from '../entity/employee.dto';
-import { EmployeeService } from '../service/employee.service';
+import { EmployeeBusiness } from '../service/employee.business';
+import { Response } from 'express';
 
 @Controller('employee')
 @UseGuards(AuthGuard('jwt'))
 export class EmployeeController extends BasicRestController<Employee, string, EmployeeDTO>{
 
-    constructor(protected service: EmployeeService){super();}
+    constructor(protected service: EmployeeBusiness){super();}
+
+    @Get('enterprise/:enterprise')
+    async findAllByEnterprise(@Res() res: Response, @Param("enterprise") enterprise: number): Promise<void>{
+        try{
+            let list = await this.service.findAllByEnterprise(enterprise);
+            res.status(HttpStatus.OK).json(new HttpResponse<Employee>().setList(list).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Employee>().setError(err.message).build(false));
+        }
+    }
+
+    @Put('edit/password/:id')
+    async editPassword(@Res() res: Response, @Body() dto: EmployeeDTO, @Param('id') id: string): Promise<void> {
+        try{
+            let data = await this.service.updatePassword(id, dto);
+            res.status(HttpStatus.OK).json(new HttpResponse<Employee>().setData(data).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Employee>().setError(err.message).build(false));
+        }
+    }
 
 }
 

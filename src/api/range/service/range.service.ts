@@ -14,6 +14,10 @@ export class RangeService extends BasicCrudService<Range, string, RangeDTO>{
         protected repo: Repository<Range>,
     ) {super();}
 
+    findAll(): Promise<Range[]> {
+        return this.findMany({ order: { id: 'ASC' } });
+    }
+
     findById(id: string): Promise<Range>{
         try{
             return this.findOne({where: {uuid:id}});

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Range } from './entity/range.entity';
 import { RangeService } from './service/range.service';
 import { RangeController } from './controller/range.controller';
+import { RangeBusiness } from './service/range.business';
 
 @Module({
     imports: [
@@ -12,10 +13,10 @@ import { RangeController } from './controller/range.controller';
         RangeController,
     ],
     providers: [
-        RangeService,
+        RangeService, RangeBusiness
     ],
     exports: [
-        RangeService,
+        RangeService, RangeBusiness
     ],
 })
 export class RangeModule{}

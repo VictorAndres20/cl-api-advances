@@ -1,15 +1,27 @@
-import { Controller, Get, Post, Body, HttpException, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpException, Param, UseGuards, Res, HttpStatus } from '@nestjs/common';
 import { HttpResponse } from '../../../commons/responses/http_response';
+import { Response } from 'express';
 import { BasicRestController } from '../../../commons/controllers/rest.controller';
 import { AuthGuard } from '@nestjs/passport';
 import { Range } from '../entity/range.entity';
 import { RangeDTO } from '../entity/range.dto';
-import { RangeService } from '../service/range.service';
+import { RangeBusiness } from '../service/range.business';
 
 @Controller('range')
+@UseGuards(AuthGuard('jwt'))
 export class RangeController extends BasicRestController<Range, string, RangeDTO>{
 
-    constructor(protected service: RangeService){super();}
+    constructor(protected service: RangeBusiness){super();}
+
+    @Get('enterprise/:enterprise')
+    async findAllByEnterprise(@Res() res: Response, @Param("enterprise") enterprise: number): Promise<void>{
+        try{
+            let list = await this.service.findAllByEnterprise(enterprise);
+            res.status(HttpStatus.OK).json(new HttpResponse<Range>().setList(list).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Range>().setError(err.message).build(false));
+        }
+    }
 
 }
 

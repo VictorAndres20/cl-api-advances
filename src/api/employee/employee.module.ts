@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Employee } from './entity/employee.entity';
 import { EmployeeService } from './service/employee.service';
 import { EmployeeController } from './controller/employee.controller';
+import { EmployeeBusiness } from './service/employee.business';
 
 @Module({
     imports: [
@@ -12,10 +13,10 @@ import { EmployeeController } from './controller/employee.controller';
         EmployeeController,
     ],
     providers: [
-        EmployeeService,
+        EmployeeService, EmployeeBusiness
     ],
     exports: [
-        EmployeeService,
+        EmployeeService, EmployeeBusiness
     ],
 })
 export class EmployeeModule{}
