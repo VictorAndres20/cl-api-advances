@@ -3,19 +3,22 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Amount } from './entity/amount.entity';
 import { AmountService } from './service/amount.service';
 import { AmountController } from './controller/amount.controller';
+import { AmountBusiness } from './service/amount.buisiness';
+import { RangeAmountModule } from '../range_amount/range_amount.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Amount]),
+        RangeAmountModule
     ],
     controllers: [
         AmountController,
     ],
     providers: [
-        AmountService,
+        AmountService, AmountBusiness
     ],
     exports: [
-        AmountService,
+        AmountService, AmountBusiness
     ],
 })
 export class AmountModule{}
