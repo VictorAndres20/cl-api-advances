@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Advance } from './entity/advance.entity';
 import { AdvanceService } from './service/advance.service';
 import { AdvanceController } from './controller/advance.controller';
+import { AdvanceBusiness } from './service/advance.business';
 
 @Module({
     imports: [
@@ -12,10 +13,10 @@ import { AdvanceController } from './controller/advance.controller';
         AdvanceController,
     ],
     providers: [
-        AdvanceService,
+        AdvanceService, AdvanceBusiness
     ],
     exports: [
-        AdvanceService,
+        AdvanceService, AdvanceBusiness
     ],
 })
 export class AdvanceModule{}

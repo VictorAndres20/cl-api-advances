@@ -9,7 +9,6 @@ import { RangeAmountModule } from '../range_amount/range_amount.module';
 @Module({
     imports: [
         TypeOrmModule.forFeature([Amount]),
-        RangeAmountModule
     ],
     controllers: [
         AmountController,

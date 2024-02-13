@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Amount } from '../entity/amount.entity';
 import { AmountDTO } from '../entity/amount.dto';
+import { Range } from 'src/api/range/entity/range.entity';
 
 @Injectable()
 export class AmountService extends BasicCrudService<Amount, string, AmountDTO>{
@@ -30,6 +31,9 @@ export class AmountService extends BasicCrudService<Amount, string, AmountDTO>{
         entity.value = dto.value;
         entity.cost = dto.cost;
         entity.active = dto.active;
+        let range = new Range();
+        range.uuid = dto.range;
+        entity.range = range;
         return entity;
     }
 
@@ -48,6 +52,9 @@ export class AmountService extends BasicCrudService<Amount, string, AmountDTO>{
         entity.value = dto.value ? dto.value : entity.value;
         entity.cost = dto.cost ? dto.cost : entity.cost;
         entity.active = dto.active ? dto.active : entity.active;
+        let range = new Range();
+        range.uuid = dto.range;
+        entity.range = dto.range ? range : entity.range;
         return entity;
     }
 

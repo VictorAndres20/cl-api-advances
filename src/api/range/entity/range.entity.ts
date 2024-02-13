@@ -1,7 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Enterprise } from 'src/api/enterprise/entity/enterprise.entity'
-import { RangeAmount } from 'src/api/range_amount/entity/range_amount.entity'
 import { Employee } from 'src/api/employee/entity/employee.entity'
+import { Amount } from 'src/api/amount/entity/amount.entity';
+import { RangeAmount } from 'src/api/range_amount/entity/range_amount.entity';
 
 @Entity({name:'range'})
 export class Range{
@@ -19,11 +20,15 @@ export class Range{
     @JoinColumn({ name: "enterprise" })
     enterprise: Enterprise;
 
-    @OneToMany(() => RangeAmount, e => e.range)
-    amounts: RangeAmount[];
+    @OneToMany(() => Amount, e => e.range)
+    amounts: Amount[];
 
     @OneToMany(() => Employee, e => e.range)
     employees: Employee[];
+
+    @OneToMany(() => RangeAmount, e => e.range)
+    amountsRanges: RangeAmount[];
+
 
 }
 

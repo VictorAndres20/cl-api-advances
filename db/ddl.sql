@@ -75,6 +75,9 @@ CREATE TABLE ks.advance(
 );
 ALTER TABLE ks.advance ADD CONSTRAINT pk_advance PRIMARY KEY(uuid);
 
+ALTER TABLE ks.amount ADD range VARCHAR(40) NOT NULL;
+
+
 
 --- Foreign Keys
 
@@ -84,9 +87,10 @@ ALTER TABLE ks.user ADD CONSTRAINT fk_user_rol FOREIGN KEY(rol) REFERENCES ks.us
 
 ALTER TABLE ks.range ADD CONSTRAINT fk_range_enterprise FOREIGN KEY(enterprise) REFERENCES ks.enterprise(id);
 
+ALTER TABLE ks.amount ADD CONSTRAINT fk_amount_range FOREIGN KEY(range) REFERENCES ks.range(uuid);
 
-ALTER TABLE ks.range_amount ADD CONSTRAINT fk_range_amount_amount FOREIGN KEY(amount) REFERENCES ks.amount(uuid);
-ALTER TABLE ks.range_amount ADD CONSTRAINT fk_range_amount_range FOREIGN KEY(range) REFERENCES ks.range(uuid);
+-- ALTER TABLE ks.range_amount ADD CONSTRAINT fk_range_amount_amount FOREIGN KEY(amount) REFERENCES ks.amount(uuid);
+-- ALTER TABLE ks.range_amount ADD CONSTRAINT fk_range_amount_range FOREIGN KEY(range) REFERENCES ks.range(uuid);
 
 ALTER TABLE ks.employee ADD CONSTRAINT fk_employee_range FOREIGN KEY(range) REFERENCES ks.range(uuid);
 

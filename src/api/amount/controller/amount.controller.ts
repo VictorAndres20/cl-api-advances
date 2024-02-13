@@ -4,8 +4,8 @@ import { BasicRestController } from '../../../commons/controllers/rest.controlle
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { Amount } from '../entity/amount.entity';
-import { AmountCreationDTO, AmountDTO } from '../entity/amount.dto';
 import { AmountBusiness } from '../service/amount.buisiness';
+import { AmountDTO } from '../entity/amount.dto';
 
 @Controller('amount')
 @UseGuards(AuthGuard('jwt'))
@@ -28,16 +28,6 @@ export class AmountController extends BasicRestController<Amount, string, Amount
         try{
             let list = await this.service.findAllByEnterprise(enterprise);
             res.status(HttpStatus.OK).json(new HttpResponse<Amount>().setList(list).build(true));
-        } catch(err){
-            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Amount>().setError(err.message).build(false));
-        }
-    }
-
-    @Post('create-transaction')
-    async editPassword(@Res() res: Response, @Body() dto: AmountCreationDTO): Promise<void> {
-        try{
-            let data = await this.service.createAmountTransaction(dto);
-            res.status(HttpStatus.OK).json(new HttpResponse<Amount>().setData(data).build(true));
         } catch(err){
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Amount>().setError(err.message).build(false));
         }

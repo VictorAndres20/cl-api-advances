@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { RangeAmount } from 'src/api/range_amount/entity/range_amount.entity'
+import { Range } from 'src/api/range/entity/range.entity';
 
 @Entity({name:'amount'})
 export class Amount{
@@ -16,8 +17,16 @@ export class Amount{
     @Column()
     active: Number;
 
+    @ManyToOne(() => Range, e => e.amounts, {
+        onDelete: "CASCADE",
+        eager: true,
+    })
+    @JoinColumn({ name: "range" })
+    range: Range;
+
     @OneToMany(() => RangeAmount, e => e.amount)
     ranges: RangeAmount[];
+
 
 }
 

@@ -29,9 +29,9 @@ export class AdvanceService extends BasicCrudService<Advance, string, AdvanceDTO
 
         //Assign data
         let entity = new Advance();
-        entity.created_date = dto.created_date;
-        entity.approved_date = dto.approved_date;
-        entity.declined_date = dto.declined_date;
+        entity.created_date = new Date();
+        entity.approved_date = null;
+        entity.declined_date = null;
         entity.value = dto.value;
         entity.cost = dto.cost;
         let employee = new Employee();

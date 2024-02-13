@@ -3,9 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Amount } from '../entity/amount.entity';
 import { AmountService } from './amount.service';
-import { AmountCreationDTO } from '../entity/amount.dto';
-import { RangeAmountService } from 'src/api/range_amount/service/range_amount.service';
-import { RangeAmountDTO } from 'src/api/range_amount/entity/range_amount.dto';
 
 @Injectable()
 export class AmountBusiness extends AmountService{
@@ -13,15 +10,12 @@ export class AmountBusiness extends AmountService{
     constructor(
         @InjectRepository(Amount)
         protected repo: Repository<Amount>,
-        private connection: DataSource,
-        private rangeAmountService: RangeAmountService
     ) {super(repo);}
 
     async findAllByEmployee(employee: string): Promise<Amount[]>{
         //return this.findMany({ where: { ranges: { range: { employees: { uuid: employee } } } } });
         return this.repo.createQueryBuilder('a')
-        .innerJoin('a.ranges', 'ra')
-        .innerJoin('ra.range', 'r')
+        .innerJoinAndSelect('a.range', 'r')
         .innerJoin('r.employees', 'e')
         .where('e.uuid = :employee', { employee })
         .orderBy('a.value', 'ASC')
@@ -30,33 +24,11 @@ export class AmountBusiness extends AmountService{
 
     async findAllByEnterprise(enterprise: number): Promise<Amount[]> {
         return this.repo.createQueryBuilder('a')
-        .innerJoin('a.ranges', 'ra')
-        .innerJoin('ra.range', 'r')
+        .innerJoinAndSelect('a.range', 'r')
         .innerJoin('r.enterprise', 'e')
         .where('e.id = :enterprise', { enterprise })
         .orderBy('a.value', 'ASC')
         .getMany();
-    }
-
-    async createAmountTransaction(dto: AmountCreationDTO): Promise<Amount>{
-        let newEntity = null;
-        const queryRunner = this.connection.createQueryRunner();
-        await queryRunner.startTransaction();
-        try {
-            let createdEntity = await queryRunner.manager.save(this.buildBaseCreation(dto));
-            newEntity = createdEntity;
-            let rangeAmountDto = new RangeAmountDTO();
-            rangeAmountDto.amount = createdEntity.uuid;
-            rangeAmountDto.range = dto.range;
-            await queryRunner.manager.save(this.rangeAmountService.buildBaseCreation(rangeAmountDto));
-            await queryRunner.commitTransaction();
-        } catch (err) {
-            await queryRunner.rollbackTransaction();
-            throw new Error(err.message);
-        } finally {
-            await queryRunner.release();
-        }
-        return newEntity;
     }
 }
 

@@ -1,16 +1,46 @@
-import { Controller, Get, Post, Body, HttpException, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpException, Param, UseGuards, Res, HttpStatus } from '@nestjs/common';
 import { HttpResponse } from '../../../commons/responses/http_response';
+import { Response } from 'express';
 import { BasicRestController } from '../../../commons/controllers/rest.controller';
 import { AuthGuard } from '@nestjs/passport';
 import { Advance } from '../entity/advance.entity';
 import { AdvanceDTO } from '../entity/advance.dto';
-import { AdvanceService } from '../service/advance.service';
+import { AdvanceBusiness } from '../service/advance.business';
 
 @Controller('advance')
 @UseGuards(AuthGuard('jwt'))
 export class AdvanceController extends BasicRestController<Advance, string, AdvanceDTO>{
 
-    constructor(protected service: AdvanceService){super();}
+    constructor(protected service: AdvanceBusiness){super();}
+
+    @Get('all/employee/paged/:page/:limit/:employee')
+    async findAllByEmployeePaged(
+        @Res() res: Response,
+        @Param('page') page: number,
+        @Param('limit') limit: number,
+        @Param('employee') employee: string,
+        ): Promise<void> {
+        try{
+            let list = await this.service.findAllByEmployeePaged(page, limit, employee);
+            res.status(HttpStatus.OK).json(new HttpResponse<Advance>().setPaged(list).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Advance>().setError(err.message).build(false));
+        }
+    }
+
+    @Get('all/enterprise/:enterprise')
+    async findAllByEnterprise(
+        @Res() res: Response,
+        @Param('enterprise') enterprise: number,
+        ): Promise<void> {
+        try{
+            let list = await this.service.findAllByEnterprise(enterprise);
+            res.status(HttpStatus.OK).json(new HttpResponse<Advance>().setList(list).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Advance>().setError(err.message).build(false));
+        }
+    }
+
 
 }
 

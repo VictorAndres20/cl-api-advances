@@ -13,7 +13,7 @@ export class RangeBusiness extends RangeService{
     ) {super(repo);}
 
     async findAllByEnterprise(enterprise: number){
-        return this.findMany({ where: { enterprise: { id: enterprise } }, order: { id: 'ASC' } });
+        return this.findMany({ where: { enterprise: { id: enterprise } }, order: { id: 'ASC' }, relations: { amounts: true } });
     }
 
 }
