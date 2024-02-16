@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Advance } from '../entity/advance.entity';
 import { AdvanceService } from './advance.service';
+import { AdvanceState } from 'src/api/advance_state/entity/advance_state.entity';
+import { EmployeeService } from 'src/api/employee/service/employee.service';
 
 @Injectable()
 export class AdvanceBusiness extends AdvanceService{
@@ -10,7 +12,8 @@ export class AdvanceBusiness extends AdvanceService{
     constructor(
         @InjectRepository(Advance)
         protected repo: Repository<Advance>,
-    ) {super(repo);}
+        protected employeeService: EmployeeService,
+    ) {super(repo, employeeService);}
 
     async findAllByEmployeePaged(page: number = 0, limit: number = 4, employee: string): Promise<[Advance[], number]> {
         return await this.repo.findAndCount({ 
@@ -26,6 +29,28 @@ export class AdvanceBusiness extends AdvanceService{
             order: { created_date: 'DESC' }, 
             relations: { employee: { range: true } }
         });
+    }
+
+    async findAllByEnterprisePending(enterprise: number): Promise<Advance[]> {
+        return await this.findMany({ 
+            where: { state: { cod: 'PEND' }, employee: { range: { enterprise: { id: enterprise } } } }, 
+            order: { created_date: 'DESC' }, 
+            relations: { employee: { range: true } }
+        });
+    }
+
+    async approve(uuid: string): Promise<Advance> {
+        return await this.changeState(uuid, 'APPR');
+    }
+
+    async changeState(uuid: string, stateCod: string): Promise<Advance> {
+        let entity = await this.findById(uuid);
+        if(entity == null) throw new Error('Entity not found for edition');
+        entity.approved_date = new Date();
+        let state = new AdvanceState();
+        state.cod = stateCod;
+        entity.state = state;
+        return await this.repo.save(entity);
     }
 
 }

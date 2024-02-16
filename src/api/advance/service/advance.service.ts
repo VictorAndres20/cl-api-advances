@@ -6,6 +6,7 @@ import { Advance } from '../entity/advance.entity';
 import { AdvanceDTO } from '../entity/advance.dto';
 import { Employee } from 'src/api/employee/entity/employee.entity'
 import { AdvanceState } from 'src/api/advance_state/entity/advance_state.entity'
+import { EmployeeService } from 'src/api/employee/service/employee.service';
 
 @Injectable()
 export class AdvanceService extends BasicCrudService<Advance, string, AdvanceDTO>{
@@ -13,6 +14,7 @@ export class AdvanceService extends BasicCrudService<Advance, string, AdvanceDTO
     constructor(
         @InjectRepository(Advance)
         protected repo: Repository<Advance>,
+        protected employeeService: EmployeeService,
     ) {super();}
 
     findById(id: string): Promise<Advance>{
@@ -44,9 +46,9 @@ export class AdvanceService extends BasicCrudService<Advance, string, AdvanceDTO
     }
 
     async dataValidationBeforeCreate(dto: AdvanceDTO): Promise<void> {
-        // Input validations for null values that are required
-        // For example validate if not exists for specific(s) properties
-        // Example same login, same email, same cod, same nit
+        let employee = await this.employeeService.findById(dto.employee);
+        if(employee === null) throw new Error(`Employee not found to create advance`);
+        if(employee.state === 0) throw new Error(`Los avances están inactivos temporalmente`);
     }
 
     buildBaseEdition(entity: Advance, dto: AdvanceDTO): Advance{

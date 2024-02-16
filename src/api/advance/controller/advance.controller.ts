@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, HttpException, Param, UseGuards, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpException, Param, UseGuards, Res, HttpStatus, Put } from '@nestjs/common';
 import { HttpResponse } from '../../../commons/responses/http_response';
 import { Response } from 'express';
 import { BasicRestController } from '../../../commons/controllers/rest.controller';
@@ -41,6 +41,28 @@ export class AdvanceController extends BasicRestController<Advance, string, Adva
         }
     }
 
+    @Get('all/enterprise/pending/:enterprise')
+    async findAllByEnterprisePending(
+        @Res() res: Response,
+        @Param('enterprise') enterprise: number,
+        ): Promise<void> {
+        try{
+            let list = await this.service.findAllByEnterprisePending(enterprise);
+            res.status(HttpStatus.OK).json(new HttpResponse<Advance>().setList(list).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Advance>().setError(err.message).build(false));
+        }
+    }
+
+    @Put('approve/:id')
+    async approve(@Res() res: Response, @Param('id') id: string): Promise<void> {
+        try{
+            let data = await this.service.approve(id);
+            res.status(HttpStatus.OK).json(new HttpResponse<Advance>().setData(data).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Advance>().setError(err.message).build(false));
+        }
+    }
 
 }
 

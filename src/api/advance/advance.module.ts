@@ -4,10 +4,12 @@ import { Advance } from './entity/advance.entity';
 import { AdvanceService } from './service/advance.service';
 import { AdvanceController } from './controller/advance.controller';
 import { AdvanceBusiness } from './service/advance.business';
+import { EmployeeModule } from '../employee/employee.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Advance]),
+        EmployeeModule,
     ],
     controllers: [
         AdvanceController,
