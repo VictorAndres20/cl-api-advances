@@ -19,7 +19,7 @@ export class AdvanceBusiness extends AdvanceService{
         return await this.repo.findAndCount({ 
             where: { employee: { uuid: employee } }, 
             order: { created_date: 'DESC' }, 
-            skip: page, take: limit
+            skip: page * limit, take: limit
         });
     }
 
@@ -43,10 +43,15 @@ export class AdvanceBusiness extends AdvanceService{
         return await this.changeState(uuid, 'APPR');
     }
 
+    async decline(uuid: string): Promise<Advance> {
+        return await this.changeState(uuid, 'DECL');
+    }
+
     async changeState(uuid: string, stateCod: string): Promise<Advance> {
         let entity = await this.findById(uuid);
         if(entity == null) throw new Error('Entity not found for edition');
-        entity.approved_date = new Date();
+        if(stateCod === 'APPR') entity.approved_date = new Date();
+        if(stateCod === 'DECL') entity.declined_date = new Date();
         let state = new AdvanceState();
         state.cod = stateCod;
         entity.state = state;
