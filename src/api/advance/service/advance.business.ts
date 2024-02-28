@@ -5,6 +5,9 @@ import { Advance } from '../entity/advance.entity';
 import { AdvanceService } from './advance.service';
 import { AdvanceState } from 'src/api/advance_state/entity/advance_state.entity';
 import { EmployeeService } from 'src/api/employee/service/employee.service';
+import { deleteInternalFile, getRandomFileName, readBase64InternalFile } from 'src/_utils/files.util';
+import { buildPDFAdvanceDoc } from 'src/_utils/pdf.util';
+import * as path from 'path';
 
 @Injectable()
 export class AdvanceBusiness extends AdvanceService{
@@ -56,6 +59,16 @@ export class AdvanceBusiness extends AdvanceService{
         state.cod = stateCod;
         entity.state = state;
         return await this.repo.save(entity);
+    }
+
+    async buildAdvancePdfById(uuid: string): Promise<string> {
+        const advance = await this.findById(uuid);
+        const file_path = __dirname;
+        const file_name = getRandomFileName();
+        await buildPDFAdvanceDoc(path.join(file_path, file_name), advance);
+        const bytes = readBase64InternalFile(file_path, file_name);
+        deleteInternalFile(file_path, file_name);
+        return bytes;
     }
 
 }
