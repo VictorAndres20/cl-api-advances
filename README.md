@@ -85,5 +85,5 @@ docker build api-advances/ -t api_advances:x.x
 
 **Create docker container**
 ```
-docker run --restart always --network network-advances --ip 172.124.0.4 --name api_advances -e TZ=UTC+5 -v /usr/local/advances/files-ascun:/opt/files-ascun -p 9001:9001 -d api_advances:x.x
+docker run --restart always --network network-advances --ip 172.124.0.5 --name api_advances -e TZ=UTC+5 -p 9001:9001 -d api_advances:x.x
 ```
