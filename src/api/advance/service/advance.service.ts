@@ -55,7 +55,9 @@ export class AdvanceService extends BasicCrudService<Advance, string, AdvanceDTO
     async dataValidationBeforeCreate(dto: AdvanceDTO): Promise<void> {
         let employee = await this.employeeService.findById(dto.employee);
         if(employee === null) throw new Error(`Employee not found to create advance`);
-        if(employee.state === 0) throw new Error(`Los avances están inactivos temporalmente`);
+        if(employee.state === 0) throw new Error(`Los anticipos están inactivos temporalmente`);
+        let advances = await this.findAllByEmployeePending(dto.employee);
+        if(advances.length > 0) throw new Error(`Tienes almenos un anticipo pendiente`);
     }
 
     buildBaseEdition(entity: Advance, dto: AdvanceDTO): Advance{
@@ -82,6 +84,13 @@ export class AdvanceService extends BasicCrudService<Advance, string, AdvanceDTO
         // Input validations for null values that are required
         // For example validate if not exists for specific(s) properties
         // Example same login, same email, same cod, same nit
+    }
+
+    async findAllByEmployeePending(employee: string): Promise<Advance[]> {
+        return await this.findMany({ 
+            where: { employee: { uuid: employee }, state: { cod: 'PEND' } }, 
+            order: { created_date: 'DESC' }, 
+        });
     }
 
 }
