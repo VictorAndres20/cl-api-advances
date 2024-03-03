@@ -17,6 +17,13 @@ export class AdvanceService extends BasicCrudService<Advance, string, AdvanceDTO
         protected employeeService: EmployeeService,
     ) {super();}
 
+    findAll(): Promise<Advance[]> {
+        return this.findMany({ 
+            order: { created_date: 'DESC' }, 
+            relations: { employee: { range: true } }
+        });
+    }
+
     findById(id: string): Promise<Advance>{
         try{
             return this.findOne({where: {uuid:id}});

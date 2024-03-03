@@ -34,6 +34,14 @@ export class AdvanceBusiness extends AdvanceService{
         });
     }
 
+    async findAllPending(): Promise<Advance[]> {
+        return await this.findMany({ 
+            where: { state: { cod: 'PEND' } }, 
+            order: { created_date: 'DESC' }, 
+            relations: { employee: { range: true } }
+        });
+    }
+
     async findAllByEnterprisePending(enterprise: number): Promise<Advance[]> {
         return await this.findMany({ 
             where: { state: { cod: 'PEND' }, employee: { range: { enterprise: { id: enterprise } } } }, 
