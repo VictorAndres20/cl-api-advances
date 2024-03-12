@@ -49,10 +49,10 @@ export const writeHeader = (doc: typeof PDFDocument, advance: Advance, posYParam
     const l_pos_x = 60;
     const r_pos_x = 310;
     //writeImagePDFDoc(doc, './cintalast_logo.png', 10, posY, fitW, fitH);    
-    writeImageHeader(doc, posY, fitW, fitH, posYAddition);
-    writeBoldPDFDoc(doc, `COMPROBANTE`, r_pos_x + 50, posY, font_size + 3);
-    writeBoldPDFDoc(doc, `SOLICITUD DE`, r_pos_x + 65, posY + posYAddition, font_size);
-    writeBoldPDFDoc(doc, `ANTICIPO`, r_pos_x + 76, posY + posYAddition * 2, font_size);
+    //writeImageHeader(doc, posY, fitW, fitH, posYAddition);
+    writeBoldPDFDoc(doc, `COMPROBANTE`, r_pos_x - 70, posY, font_size + 3);
+    writeBoldPDFDoc(doc, `SOLICITUD DE`, r_pos_x + 15 - 70, posY + posYAddition, font_size);
+    writeBoldPDFDoc(doc, `ANTICIPO`, r_pos_x + 26 - 70, posY + posYAddition * 2, font_size);
     posY += (posYAddition * 4) + fitH;
     writeBoldPDFDoc(doc, `Fecha de solicitud: ${dateCreated}`, l_pos_x, posY, font_size);
     writeBoldPDFDoc(doc, `Fecha de transferencia: ${dateApproved}`, r_pos_x, posY, font_size);
@@ -79,9 +79,9 @@ export const writeDetail = (doc: typeof PDFDocument, advance: Advance, posYParam
     posY += posYAddition * 4;
     writeBoldPDFDoc(doc, `ESTE COMPROBANTE ES GENERADO AUTOMÁTICAMENTE AL CONFIRMAR LA`, pos_x - 50, posY, font_size);
     posY += posYAddition;
-    writeBoldPDFDoc(doc, `SOLICITUD, TENIENDO CONOCIMIENTO DEL COSTO Y DEL DESCUENTO EN LA`, pos_x - 50, posY, font_size);
+    writeBoldPDFDoc(doc, `SOLICITUD, TENIENDO CONOCIMIENTO DEL COSTO Y DEL DESCUENTO QUE SE`, pos_x - 50, posY, font_size);
     posY += posYAddition;
-    writeBoldPDFDoc(doc, `SIGUIENTE QUINCENA`, pos_x + 90, posY, font_size);
+    writeBoldPDFDoc(doc, `APLICARÁ EN EL PAGO DE LA CORRIENTE QUINCENA O PERIODO DE PAGO.`, pos_x - 50, posY, font_size);
     posY += posYAddition;
     return posY;
 }
