@@ -10,6 +10,8 @@ import { AdvanceStateModule } from './advance_state/advance_state.module';
 import { AdvanceModule } from './advance/advance.module';
 import { AuthModule } from './auth/auth.module';
 import { LoginModule } from './login/login.module';
+import { BankSupportedModule } from './bank_supported/bank_supported.module';
+import { BankModule } from './bank/bank.module';
 
 @Module({
     imports: [
@@ -23,7 +25,9 @@ import { LoginModule } from './login/login.module';
         AdvanceStateModule,
         AdvanceModule,
         AuthModule,
-        LoginModule
+        LoginModule,
+        BankModule,
+        BankSupportedModule,
     ],
     controllers: [
     ],

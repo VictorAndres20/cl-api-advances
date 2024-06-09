@@ -6,6 +6,7 @@ import { Employee } from '../entity/employee.entity';
 import { EmployeeDTO } from '../entity/employee.dto';
 import { Range } from 'src/api/range/entity/range.entity'
 import { cryptText } from 'src/_utils/bcrypt.util';
+import { Bank } from 'src/api/bank/entity/bank.entity';
 
 @Injectable()
 export class EmployeeService extends BasicCrudService<Employee, string, EmployeeDTO>{
@@ -46,6 +47,9 @@ export class EmployeeService extends BasicCrudService<Employee, string, Employee
         let range = new Range();
         range.uuid = dto.range;
         entity.range = range;
+        let bank = new Bank();
+        bank.cod = dto.bank;
+        entity.bank = bank;
         return entity;
     }
 
@@ -69,6 +73,9 @@ export class EmployeeService extends BasicCrudService<Employee, string, Employee
         let range = new Range();
         range.uuid = dto.range;
         entity.range = dto.range ? range : entity.range;
+        let bank = new Bank();
+        bank.cod = dto.bank;
+        entity.bank = dto.bank ? bank : entity.bank;
         return entity;
     }
 

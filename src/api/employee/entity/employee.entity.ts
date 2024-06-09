@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Range } from 'src/api/range/entity/range.entity'
+import { Bank } from 'src/api/bank/entity/bank.entity'
 import { Advance } from 'src/api/advance/entity/advance.entity'
 
 @Entity({name:'employee'})
@@ -32,6 +33,13 @@ export class Employee{
     })
     @JoinColumn({ name: "range" })
     range: Range;
+
+    @ManyToOne(() => Bank, e => e.employees, {
+        onDelete: "CASCADE",
+        eager: true,
+    })
+    @JoinColumn({ name: "bank" })
+    bank: Bank;
 
     @OneToMany(() => Advance, e => e.employee)
     advances: Advance[];
