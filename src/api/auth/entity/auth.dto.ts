@@ -11,4 +11,5 @@ export class AuthDTO {
     rol: string;
     company_id: Number;
     company_name: string;
+    bank: string;
 }

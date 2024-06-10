@@ -26,6 +26,7 @@ export class LoginService {
         response.rol = user.rol?.cod;
         response.company_id = user.enterprise?.id;
         response.company_name = user.enterprise?.name;
+        response.bank = "";
         response.token = this.authService.generateAccessToken(user.uuid);
         return response;
     }
@@ -41,6 +42,7 @@ export class LoginService {
         response.rol = 'EMPL';
         response.company_id = user.range?.enterprise?.id;
         response.company_name = user.range?.enterprise?.name;
+        response.bank = user.bank?.cod;
         response.token = this.authService.generateAccessToken(user.uuid);
         return response;
     }

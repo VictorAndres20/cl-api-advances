@@ -18,3 +18,6 @@ insert into ks.bank VALUES('COLO', 'Bancolombia');
 insert into ks.bank VALUES('BBVA', 'BBVA');
 insert into ks.bank VALUES('DAVI', 'Davivienda');
 insert into ks.bank VALUES('SCOT', 'Scotiabank Colpatria');
+
+insert into ks.bank_supported values('BOGO', 'BOGO');
+insert into ks.bank_supported values('DAVI', 'DAVI');
