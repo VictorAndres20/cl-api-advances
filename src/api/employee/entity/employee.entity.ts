@@ -2,6 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, OneToMany, ManyT
 import { Range } from 'src/api/range/entity/range.entity'
 import { Bank } from 'src/api/bank/entity/bank.entity'
 import { Advance } from 'src/api/advance/entity/advance.entity'
+import { BankAccountType } from 'src/api/bank_account_type/entity/bank_account_type.entity';
+import { Fintech } from 'src/api/fintech/entity/fintech.entity';
 
 @Entity({name:'employee'})
 export class Employee{
@@ -27,6 +29,12 @@ export class Employee{
     @Column()
     state: Number;
 
+    @Column()
+    bank_account_number: string;
+
+    @Column()
+    fintech_account_number: string;
+
     @ManyToOne(() => Range, e => e.employees, {
         onDelete: "CASCADE",
         eager: true,
@@ -40,6 +48,20 @@ export class Employee{
     })
     @JoinColumn({ name: "bank" })
     bank: Bank;
+
+    @ManyToOne(() => BankAccountType, e => e.employees, {
+        onDelete: "CASCADE",
+        eager: true,
+    })
+    @JoinColumn({ name: "bank_account_type" })
+    bank_account_type: BankAccountType;
+
+    @ManyToOne(() => Fintech, e => e.employees, {
+        onDelete: "CASCADE",
+        eager: true,
+    })
+    @JoinColumn({ name: "bank_account_type" })
+    fintech: Fintech;
 
     @OneToMany(() => Advance, e => e.employee)
     advances: Advance[];

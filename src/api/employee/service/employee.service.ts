@@ -7,6 +7,8 @@ import { EmployeeDTO } from '../entity/employee.dto';
 import { Range } from 'src/api/range/entity/range.entity'
 import { cryptText } from 'src/_utils/bcrypt.util';
 import { Bank } from 'src/api/bank/entity/bank.entity';
+import { BankAccountType } from 'src/api/bank_account_type/entity/bank_account_type.entity';
+import { Fintech } from 'src/api/fintech/entity/fintech.entity';
 
 @Injectable()
 export class EmployeeService extends BasicCrudService<Employee, string, EmployeeDTO>{
@@ -44,12 +46,20 @@ export class EmployeeService extends BasicCrudService<Employee, string, Employee
         entity.salary = dto.salary;
         entity.password = cryptText(dto.password);
         entity.state = dto.state;
+        entity.bank_account_number = dto.bank_account_number;
+        entity.fintech_account_number = dto.fintech_account_number;
         let range = new Range();
         range.uuid = dto.range;
         entity.range = range;
         let bank = new Bank();
         bank.cod = dto.bank;
         entity.bank = bank;
+        let bank_account_type = new BankAccountType();
+        bank_account_type.cod = dto.bank_account_type;
+        entity.bank_account_type = bank_account_type;
+        let fintech = new Fintech();
+        fintech.cod = dto.fintech;
+        entity.fintech = fintech;
         return entity;
     }
 
@@ -70,12 +80,20 @@ export class EmployeeService extends BasicCrudService<Employee, string, Employee
         entity.phone = dto.phone ? dto.phone : entity.phone;
         entity.salary = dto.salary ? dto.salary : entity.salary;
         entity.state = dto.state ? dto.state : entity.state;
+        entity.bank_account_number = dto.bank_account_number ? dto.bank_account_number : entity.bank_account_number;
+        entity.fintech_account_number = dto.fintech_account_number ? dto.fintech_account_number : entity.fintech_account_number;
         let range = new Range();
         range.uuid = dto.range;
         entity.range = dto.range ? range : entity.range;
         let bank = new Bank();
         bank.cod = dto.bank;
         entity.bank = dto.bank ? bank : entity.bank;
+        let bank_account_type = new BankAccountType();
+        bank_account_type.cod = dto.bank_account_type;
+        entity.bank_account_type = dto.bank_account_type ? bank_account_type : entity.bank_account_type;
+        let fintech = new Fintech();
+        fintech.cod = dto.fintech;
+        entity.fintech = dto.fintech ? fintech : entity.fintech;
         return entity;
     }
 

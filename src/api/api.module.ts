@@ -12,6 +12,8 @@ import { AuthModule } from './auth/auth.module';
 import { LoginModule } from './login/login.module';
 import { BankSupportedModule } from './bank_supported/bank_supported.module';
 import { BankModule } from './bank/bank.module';
+import { BankAccountTypeModule } from './bank_account_type/bank_account_type.module';
+import { FintechModule } from './fintech/fintech.modue';
 
 @Module({
     imports: [
@@ -28,6 +30,8 @@ import { BankModule } from './bank/bank.module';
         LoginModule,
         BankModule,
         BankSupportedModule,
+        BankAccountTypeModule,
+        FintechModule
     ],
     controllers: [
     ],

@@ -43,6 +43,7 @@ export class AdvanceService extends BasicCrudService<Advance, string, AdvanceDTO
         entity.declined_date = null;
         entity.value = dto.value;
         entity.cost = dto.cost;
+        entity.use_fintech = dto.use_fintech;
         let employee = new Employee();
         employee.uuid = dto.employee;
         entity.employee = employee;
@@ -71,6 +72,7 @@ export class AdvanceService extends BasicCrudService<Advance, string, AdvanceDTO
         entity.declined_date = dto.declined_date ? dto.declined_date : entity.declined_date;
         entity.value = dto.value ? dto.value : entity.value;
         entity.cost = dto.cost ? dto.cost : entity.cost;
+        entity.use_fintech = dto.use_fintech ? dto.use_fintech : entity.use_fintech;
         let employee = new Employee();
         employee.uuid = dto.employee;
         entity.employee = dto.employee ? employee : entity.employee;

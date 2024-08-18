@@ -7,6 +7,7 @@ import { BankSupportedDTO } from '../entity/bank_supported.dto';
 import { BankSupportedService } from '../service/bank_supported.service';
 
 @Controller('bank-supported')
+@UseGuards(AuthGuard('jwt'))
 export class BankSupportedController extends BasicRestController<BankSupported, string, BankSupportedDTO>{
 
     constructor(protected service: BankSupportedService){super();}

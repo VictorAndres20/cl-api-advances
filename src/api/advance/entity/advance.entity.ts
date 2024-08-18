@@ -23,6 +23,9 @@ export class Advance{
     @Column()
     cost: Number;
 
+    @Column()
+    use_fintech: Number;
+
     @ManyToOne(() => Employee, e => e.advances, {
         onDelete: "CASCADE",
         eager: true,

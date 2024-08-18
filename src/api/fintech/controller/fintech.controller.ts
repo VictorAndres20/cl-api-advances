@@ -2,15 +2,15 @@ import { Controller, Get, Post, Body, HttpException, Param, UseGuards } from '@n
 import { HttpResponse } from '../../../commons/responses/http_response';
 import { BasicRestController } from '../../../commons/controllers/rest.controller';
 import { AuthGuard } from '@nestjs/passport';
-import { Bank } from '../entity/bank.entity';
-import { BankDTO } from '../entity/bank.dto';
-import { BankService } from '../service/bank.service';
+import { Fintech } from '../entity/fintech.entity';
+import { FintechDTO } from '../entity/fintech.dto';
+import { FintechService } from '../service/fintech.service';
 
-@Controller('bank')
+@Controller('fintech')
 @UseGuards(AuthGuard('jwt'))
-export class BankController extends BasicRestController<Bank, string, BankDTO>{
+export class FintechController extends BasicRestController<Fintech, string, FintechDTO>{
 
-    constructor(protected service: BankService){super();}
+    constructor(protected service: FintechService){super();}
 
 }
 
