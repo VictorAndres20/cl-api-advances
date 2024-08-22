@@ -22,6 +22,8 @@ insert into ks.bank VALUES('SCOT', 'Scotiabank Colpatria');
 insert into ks.bank_supported values('BOGO', 'BOGO');
 insert into ks.bank_supported values('DAVI', 'DAVI');
 
+-- New
+
 create table ks.bank_account_type(
 	cod varchar(5) not null,
 	name varchar(100) not null
@@ -45,3 +47,30 @@ alter table ks.employee add bank_account_type varchar(5) default 'AHOR';
 alter table ks.employee add bank_account_number varchar(20);
 alter table ks.employee add fintech varchar(5);
 alter table ks.employee add fintech_account_number varchar(13);
+
+create table ks.messages(
+cod varchar(5) not null,
+message varchar(800)
+);
+
+alter table ks.messages add constraint pk_messages primary key(cod);
+
+insert into ks.messages 
+values('ADVA', 'En caso de retiro, la Empresa también se entenderá expresa e irrevocablemente autorizada para descontar dicha suma de los salarios, prestaciones sociales, vacaciones, indemnizaciones, beneficios o auxilios legales o extralegales y cualquier otra acreencia laboral que tuvieras a tu favor.');
+
+create table ks.bank_messages(
+cod varchar(5) not null,
+message varchar(800),
+bank varchar(5)
+);
+
+alter table ks.bank_messages add constraint pk_bank_messages primary key(cod);
+
+insert into ks.bank_messages
+values('HDAVI', 'Para transferencias a Davivienda', 'DAVI');
+
+insert into ks.bank_messages
+values('HBOGO', 'Para transferencias a Banco de Bogotá', 'BOGO');
+
+insert into ks.bank_messages
+values('HSCOT', 'Para transferencias a Scotiabank', 'SCOT');

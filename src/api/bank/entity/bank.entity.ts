@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Employee } from 'src/api/employee/entity/employee.entity'
 import { BankSupported } from 'src/api/bank_supported/entity/bank_supported.entity'
+import { BankMessages } from 'src/api/bank_messages/entity/bank_messages.entity';
 
 @Entity({name:'bank'})
 export class Bank{
@@ -16,6 +17,9 @@ export class Bank{
 
     @OneToMany(() => BankSupported, e => e.bank)
     supporteds: BankSupported[];
+
+    @OneToMany(() => BankMessages, e => e.bank)
+    messages: BankMessages[];
 
 }
 

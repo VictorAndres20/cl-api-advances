@@ -14,6 +14,8 @@ import { BankSupportedModule } from './bank_supported/bank_supported.module';
 import { BankModule } from './bank/bank.module';
 import { BankAccountTypeModule } from './bank_account_type/bank_account_type.module';
 import { FintechModule } from './fintech/fintech.modue';
+import { MessagesModule } from './messages/messages.module';
+import { BankMessagesModule } from './bank_messages/bank_messages.module';
 
 @Module({
     imports: [
@@ -31,7 +33,9 @@ import { FintechModule } from './fintech/fintech.modue';
         BankModule,
         BankSupportedModule,
         BankAccountTypeModule,
-        FintechModule
+        FintechModule,
+        MessagesModule,
+        BankMessagesModule
     ],
     controllers: [
     ],

@@ -57,9 +57,11 @@ export class EmployeeService extends BasicCrudService<Employee, string, Employee
         let bank_account_type = new BankAccountType();
         bank_account_type.cod = dto.bank_account_type;
         entity.bank_account_type = bank_account_type;
-        let fintech = new Fintech();
-        fintech.cod = dto.fintech;
-        entity.fintech = fintech;
+        if(dto.fintech){
+            let fintech = new Fintech();
+            fintech.cod = dto.fintech;
+            entity.fintech = fintech;
+        }
         return entity;
     }
 

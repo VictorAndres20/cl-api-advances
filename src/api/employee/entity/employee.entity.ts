@@ -60,7 +60,7 @@ export class Employee{
         onDelete: "CASCADE",
         eager: true,
     })
-    @JoinColumn({ name: "bank_account_type" })
+    @JoinColumn({ name: "fintech" })
     fintech: Fintech;
 
     @OneToMany(() => Advance, e => e.employee)
