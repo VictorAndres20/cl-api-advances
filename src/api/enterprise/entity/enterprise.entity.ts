@@ -9,6 +9,9 @@ export class Enterprise{
     id: number;
 
     @Column()
+    nit: string;
+
+    @Column()
     name: string;
 
     @Column()

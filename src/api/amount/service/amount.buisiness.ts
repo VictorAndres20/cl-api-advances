@@ -25,9 +25,20 @@ export class AmountBusiness extends AmountService{
     async findAllByEnterprise(enterprise: number): Promise<Amount[]> {
         return this.repo.createQueryBuilder('a')
         .innerJoinAndSelect('a.range', 'r')
-        .innerJoin('r.enterprise', 'e')
+        .innerJoinAndSelect('r.enterprise', 'e')
         .where('e.id = :enterprise', { enterprise })
-        .orderBy('a.value', 'ASC')
+        .orderBy('e.name', 'ASC')
+        .addOrderBy('a.value', 'ASC')
+        .getMany();
+    }
+
+    async findAll(): Promise<Amount[]>{
+        //return this.findMany({ where: { ranges: { range: { employees: { uuid: employee } } } } });
+        return this.repo.createQueryBuilder('a')
+        .innerJoinAndSelect('a.range', 'r')
+        .innerJoinAndSelect('r.enterprise', 'e')
+        .orderBy('e.name', 'ASC')
+        .addOrderBy('a.value', 'ASC')
         .getMany();
     }
 }

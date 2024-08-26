@@ -47,12 +47,12 @@ export const writeHeader = (doc: typeof PDFDocument, advance: Advance, posYParam
     const fitW = 300;
     const fitH = 50;
     const l_pos_x = 60;
-    const r_pos_x = 310;
+    const r_pos_x = 370;
     //writeImagePDFDoc(doc, './cintalast_logo.png', 10, posY, fitW, fitH);    
     //writeImageHeader(doc, posY, fitW, fitH, posYAddition);
-    writeBoldPDFDoc(doc, `COMPROBANTE`, r_pos_x - 70, posY, font_size + 3);
-    writeBoldPDFDoc(doc, `SOLICITUD DE`, r_pos_x + 15 - 70, posY + posYAddition, font_size);
-    writeBoldPDFDoc(doc, `ANTICIPO`, r_pos_x + 26 - 70, posY + posYAddition * 2, font_size);
+    writeBoldPDFDoc(doc, `COMPROBANTE`, r_pos_x - 70 - 60, posY, font_size + 3);
+    writeBoldPDFDoc(doc, `SOLICITUD DE`, r_pos_x + 15 - 70 - 60, posY + posYAddition, font_size);
+    writeBoldPDFDoc(doc, `ANTICIPO`, r_pos_x + 26 - 70 - 60, posY + posYAddition * 2, font_size);
     posY += (posYAddition * 4) + fitH;
     writeBoldPDFDoc(doc, `Fecha de solicitud: ${dateCreated}`, l_pos_x, posY, font_size);
     writeBoldPDFDoc(doc, `Fecha de transferencia: ${dateApproved}`, r_pos_x, posY, font_size);
@@ -61,7 +61,7 @@ export const writeHeader = (doc: typeof PDFDocument, advance: Advance, posYParam
     writeBoldPDFDoc(doc, `Cédula del solicitante: ${employee?.id}`, r_pos_x, posY, font_size);
     posY += posYAddition;
     writeBoldPDFDoc(doc, `Empresa asociada: ${employee?.range?.enterprise?.name}`, l_pos_x, posY, font_size);
-    writeBoldPDFDoc(doc, `NIT empresa asociada: ${employee?.range?.enterprise?.id}`, r_pos_x, posY, font_size);
+    writeBoldPDFDoc(doc, `NIT empresa asociada: ${employee?.range?.enterprise?.nit ?? ''}`, r_pos_x, posY, font_size);
     posY += posYAddition * 4;
     return posY;
 }
@@ -71,11 +71,13 @@ export const writeDetail = (doc: typeof PDFDocument, advance: Advance, posYParam
     const pos_x = 150;
     writeBoldPDFDoc(doc, `Detalle de solicitud:`, pos_x - 50, posY, font_size);
     posY += posYAddition * 2;
+    writePDFDoc(doc, `Transferir a: ${advance.use_fintech ? (`${advance.employee?.fintech?.name} (${advance.employee?.fintech_account_number ?? ''})`) : (`${advance.employee?.bank?.name}, ${advance.employee?.bank_account_type?.name}, ${advance.employee?.bank_account_number ?? ''}`)}`, pos_x, posY, font_size);
+    posY += posYAddition;
     writePDFDoc(doc, `Valor de la solicitud ....................................... ${advance.value}`, pos_x + 21, posY, font_size);   
     posY += posYAddition;
     writePDFDoc(doc, `Costo de la solicitud ....................................... ${advance.cost}`, pos_x + 21, posY, font_size);   
     posY += posYAddition;
-    writePDFDoc(doc, `Total a descontar ........................................... ${Number(advance.value) + Number(advance.cost)}`, pos_x + 21, posY, font_size);   
+    writePDFDoc(doc, `Total a descontar ........................................... ${Number(advance.value) + Number(advance.cost)}`, pos_x + 21, posY, font_size);
     posY += posYAddition * 4;
     writeBoldPDFDoc(doc, `ESTE COMPROBANTE ES GENERADO AUTOMÁTICAMENTE AL CONFIRMAR LA`, pos_x - 50, posY, font_size);
     posY += posYAddition;

@@ -31,6 +31,7 @@ export class EnterpriseService extends BasicCrudService<Enterprise, number, Ente
 
         //Assign data
         let entity = new Enterprise();
+        entity.nit = dto.nit;
         entity.name = dto.name;
         entity.address = dto.address;
         return entity;
@@ -48,6 +49,7 @@ export class EnterpriseService extends BasicCrudService<Enterprise, number, Ente
         if(! dto.id) throw new Error('Entity id null');
 
         //Assign data
+        entity.nit = dto.nit ? dto.nit : entity.nit;
         entity.name = dto.name ? dto.name : entity.name;
         entity.address = dto.address ? dto.address : entity.address;
         return entity;

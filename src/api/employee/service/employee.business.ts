@@ -18,6 +18,10 @@ export class EmployeeBusiness extends EmployeeService{
         return this.findMany({ where: { range: { enterprise: { id: enterprise } } }, order: { name: 'ASC' } });
     }
 
+    async findAll(){
+        return this.findMany({ order: { name: 'ASC' } });
+    }
+
     async updatePassword(id: string, dto: EmployeeDTO): Promise<Employee>{
         try{
             let entity = await this.findById(id);

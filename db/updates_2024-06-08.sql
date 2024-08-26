@@ -74,3 +74,10 @@ values('HBOGO', 'Para transferencias a Banco de Bogotá', 'BOGO');
 
 insert into ks.bank_messages
 values('HSCOT', 'Para transferencias a Scotiabank', 'SCOT');
+
+update ks."range" r set enterprise = 2 where id = '1TEMP';
+update ks."range" r set enterprise = 2 where id = 'MinTe';
+alter table ks."range" alter column id type varchar(100);
+alter table ks.enterprise add nit varchar(20);
+update ks.enterprise r set nit = '8600728108' where id = 1;
+update ks.enterprise r set nit = '9010079011' where id = 2;

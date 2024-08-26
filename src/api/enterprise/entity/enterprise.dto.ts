@@ -1,5 +1,6 @@
 export class EnterpriseDTO {
     readonly id: number;
+    readonly nit: string;
     readonly name: string;
     readonly address: string;
 }
