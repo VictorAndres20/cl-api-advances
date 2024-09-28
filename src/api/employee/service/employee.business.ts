@@ -5,6 +5,8 @@ import { Employee } from '../entity/employee.entity';
 import { EmployeeService } from './employee.service';
 import { EmployeeDTO } from '../entity/employee.dto';
 import { cryptText } from 'src/_utils/bcrypt.util';
+import { EmployeeExcelDTO } from '../entity/employee-excel.dto';
+import { readExcelByBytes } from 'src/_utils/read-excel';
 
 @Injectable()
 export class EmployeeBusiness extends EmployeeService{
@@ -48,6 +50,10 @@ export class EmployeeBusiness extends EmployeeService{
         if(entity == null) throw new Error('Entity not found for edition');
         entity.state = active;
         return await this.repo.save(entity);
+    }
+
+    async readExcelEmployees(dto: EmployeeDTO): Promise<EmployeeExcelDTO[]> {
+        return readExcelByBytes<EmployeeExcelDTO>(dto.bytes);
     }
 
 }

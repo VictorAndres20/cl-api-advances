@@ -87,3 +87,12 @@ alter table ks."range" alter column id type varchar(100);
 alter table ks.enterprise add nit varchar(20);
 update ks.enterprise r set nit = '8600728108' where id = 1;
 update ks.enterprise r set nit = '9010079011' where id = 2;
+
+-- AV villas and Daviplata added
+insert into ks.bank VALUES('AVVI', 'Banco AV Villas');
+insert into ks.bank_supported values('AVVI', 'AVVI');
+
+insert into ks.bank_messages
+values('HAVVI', 'Para transferencias a Banco AV Villas', 'AVVI');
+
+insert into ks.fintech values('DAVIP', 'Daviplata');

@@ -6,6 +6,7 @@ import { Employee } from '../entity/employee.entity';
 import { EmployeeDTO } from '../entity/employee.dto';
 import { EmployeeBusiness } from '../service/employee.business';
 import { Response } from 'express';
+import { EmployeeExcelDTO } from '../entity/employee-excel.dto';
 
 @Controller('employee')
 @UseGuards(AuthGuard('jwt'))
@@ -50,6 +51,16 @@ export class EmployeeController extends BasicRestController<Employee, string, Em
             res.status(HttpStatus.OK).json(new HttpResponse<Employee>().setData(data).build(true));
         } catch(err){
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Employee>().setError(err.message).build(false));
+        }
+    }
+
+    @Post('read-excel')
+    async readExcel(@Res() res: Response, @Body() dto: EmployeeDTO): Promise<void> {
+        try{
+            let data = await this.service.readExcelEmployees(dto);
+            res.status(HttpStatus.OK).json(new HttpResponse<EmployeeExcelDTO>().setList(data).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<EmployeeExcelDTO>().setError(err.message).build(false));
         }
     }
 
