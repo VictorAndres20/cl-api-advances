@@ -16,6 +16,7 @@ import { BankAccountTypeModule } from './bank_account_type/bank_account_type.mod
 import { FintechModule } from './fintech/fintech.modue';
 import { MessagesModule } from './messages/messages.module';
 import { BankMessagesModule } from './bank_messages/bank_messages.module';
+import { AdvancePeriodModule } from './advance_period/advance_period.module';
 
 @Module({
     imports: [
@@ -35,7 +36,8 @@ import { BankMessagesModule } from './bank_messages/bank_messages.module';
         BankAccountTypeModule,
         FintechModule,
         MessagesModule,
-        BankMessagesModule
+        BankMessagesModule,
+        AdvancePeriodModule,
     ],
     controllers: [
     ],

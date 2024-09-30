@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { BasicCrudService } from '../../../commons/services/crud.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Advance } from '../entity/advance.entity';
 import { AdvanceDTO } from '../entity/advance.dto';
 import { Employee } from 'src/api/employee/entity/employee.entity'
 import { AdvanceState } from 'src/api/advance_state/entity/advance_state.entity'
 import { EmployeeService } from 'src/api/employee/service/employee.service';
+import { AdvancePeriod } from 'src/api/advance_period/entity/advance_period.entity';
 
 @Injectable()
 export class AdvanceService extends BasicCrudService<Advance, string, AdvanceDTO>{
@@ -19,6 +20,14 @@ export class AdvanceService extends BasicCrudService<Advance, string, AdvanceDTO
 
     findAll(): Promise<Advance[]> {
         return this.findMany({ 
+            order: { created_date: 'DESC' }, 
+            relations: { employee: { range: true } }
+        });
+    }
+
+    findAllByPeriod(period: string): Promise<Advance[]> {
+        return this.findMany({ 
+            where: {period: {uuid: period}},
             order: { created_date: 'DESC' }, 
             relations: { employee: { range: true } }
         });
@@ -50,15 +59,24 @@ export class AdvanceService extends BasicCrudService<Advance, string, AdvanceDTO
         let advance_state = new AdvanceState();
         advance_state.cod = dto.state;
         entity.state = advance_state;
+        if(! dto.period) throw new Error('No period in DTO');
+        let period = new AdvancePeriod();
+        period.uuid = dto.period;
+        entity.period = period;
         return entity;
     }
 
     async dataValidationBeforeCreate(dto: AdvanceDTO): Promise<void> {
-        let employee = await this.employeeService.findById(dto.employee);
+        const employee = await this.employeeService.findById(dto.employee);
         if(employee === null) throw new Error(`Employee not found to create advance`);
-        if(employee.state === 0) throw new Error(`Los anticipos están inactivos temporalmente`);
-        let advances = await this.findAllByEmployeePending(dto.employee);
+        if(employee.state === 0 || employee.state === -1) throw new Error(`Los anticipos están inactivos temporalmente`);
+        const advances = await this.findAllByEmployeePending(dto.employee);
         if(advances.length > 0) throw new Error(`Tienes almenos un anticipo pendiente`);
+        const period = await this.repo.manager.getRepository(AdvancePeriod)
+            .findOne({ where: {enterprise_id: employee.range?.enterprise?.id, finished_date: IsNull()} });
+        if(! period) throw new Error(`No hay periodo de avances abierto`);
+
+        dto.period = period.uuid;
     }
 
     buildBaseEdition(entity: Advance, dto: AdvanceDTO): Advance{

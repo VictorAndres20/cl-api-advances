@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { BasicCrudService } from '../../../commons/services/crud.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Enterprise } from '../entity/enterprise.entity';
 import { EnterpriseDTO } from '../entity/enterprise.dto';
+import { AdvancePeriodDTO } from 'src/api/advance_period/entity/advance_period.dto';
+import { AdvancePeriod } from 'src/api/advance_period/entity/advance_period.entity';
 
 @Injectable()
 export class EnterpriseService extends BasicCrudService<Enterprise, number, EnterpriseDTO>{
@@ -11,6 +13,7 @@ export class EnterpriseService extends BasicCrudService<Enterprise, number, Ente
     constructor(
         @InjectRepository(Enterprise)
         protected repo: Repository<Enterprise>,
+        private connection: DataSource,
     ) {super();}
 
     findAll(): Promise<Enterprise[]> {
@@ -59,6 +62,27 @@ export class EnterpriseService extends BasicCrudService<Enterprise, number, Ente
         // Input validations for null values that are required
         // For example validate if not exists for specific(s) properties
         // Example same login, same email, same cod, same nit
+    }
+
+    async createOne(dto: EnterpriseDTO): Promise<Enterprise> {
+        const queryRunner = this.connection.createQueryRunner();
+        await queryRunner.startTransaction();
+        try {
+            await this.dataValidationBeforeCreate(dto);
+            const enterprise = await queryRunner.manager.save(this.buildBaseCreation(dto));
+            const period = new AdvancePeriod();
+            period.name = 'Periodo inicial';
+            period.created_date = new Date();
+            period.enterprise_id = enterprise.id;
+            await queryRunner.manager.save(period);
+            await queryRunner.commitTransaction();
+            return enterprise;
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw new Error(err.message);
+        } finally {
+            await queryRunner.release();
+        }
     }
 
 }

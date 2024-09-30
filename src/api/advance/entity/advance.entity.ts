@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Employee } from 'src/api/employee/entity/employee.entity'
 import { AdvanceState } from 'src/api/advance_state/entity/advance_state.entity'
+import { AdvancePeriod } from 'src/api/advance_period/entity/advance_period.entity';
 
 @Entity({name:'advance'})
 export class Advance{
@@ -39,6 +40,13 @@ export class Advance{
     })
     @JoinColumn({ name: "state" })
     state: AdvanceState;
+
+    @ManyToOne(() => AdvancePeriod, e => e.advances, {
+        onDelete: "CASCADE",
+        eager: true,
+    })
+    @JoinColumn({ name: "period" })
+    period: AdvancePeriod;
 
 }
 
