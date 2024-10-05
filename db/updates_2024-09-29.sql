@@ -28,7 +28,7 @@ values('Periodo inicial', '2024-09-01 01:00:00', 3);
 select * from ks.advance_period ap;
 
 UPDATE ks.advance ad
-SET ad.period = 'NEED TO EXECUTE FISRT ABOVE'
+SET period = 'NEED TO EXECUTE FISRT ABOVE'
 FROM ks.employee e
     inner JOIN ks."range" r ON e."range" = r."uuid"
 WHERE
@@ -36,7 +36,7 @@ WHERE
     AND r.enterprise = 1;
 
 UPDATE ks.advance ad
-SET ad.period = 'NEED TO EXECUTE FISRT ABOVE'
+SET period = 'NEED TO EXECUTE FISRT ABOVE'
 FROM ks.employee e
     inner JOIN ks."range" r ON e."range" = r."uuid"
 WHERE
@@ -44,7 +44,7 @@ WHERE
     AND r.enterprise = 2;
 
 UPDATE ks.advance ad
-SET ad.period = 'NEED TO EXECUTE FISRT ABOVE'
+SET period = 'NEED TO EXECUTE FISRT ABOVE'
 FROM ks.employee e
     inner JOIN ks."range" r ON e."range" = r."uuid"
 WHERE
