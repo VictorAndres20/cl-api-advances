@@ -93,7 +93,11 @@ export class AdvancePeriodService extends BasicCrudService<AdvancePeriod, string
             if(! finishPeriod) throw new Error('No period to finish');
             finishPeriod.finished_date = dto.finished_date;
             await queryRunner.manager.save(finishPeriod);
-            const entity = this.buildBaseCreation(dto);
+            const entity = this.buildBaseCreation({
+                ...dto, 
+                created_date: dto.created_date, 
+                finished_date: null
+            });
             const entityCreated = await queryRunner.manager.save(entity);
             await queryRunner.commitTransaction();
             return entityCreated;
