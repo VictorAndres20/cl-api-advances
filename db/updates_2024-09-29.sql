@@ -50,3 +50,11 @@ FROM ks.employee e
 WHERE
     e."uuid" = ad.employee 
     AND r.enterprise = 3;
+
+-- Daviplata as bank
+insert into ks.bank VALUES('DAVIP', 'Daviplata');
+
+insert into ks.bank_supported values('DAVIP', 'DAVIP');
+
+insert into ks.bank_messages
+values('HDAVP', 'Para transferencias a Daviplata', 'DAVIP');
