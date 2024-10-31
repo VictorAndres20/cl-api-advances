@@ -33,6 +33,7 @@ export class RangeService extends BasicCrudService<Range, string, RangeDTO>{
         //Assign data
         let entity = new Range();
         entity.id = dto.id;
+        entity.money_limit = dto.money_limit;
         let enterprise = new Enterprise();
         enterprise.id = dto.enterprise;
         entity.enterprise = enterprise;
@@ -52,6 +53,7 @@ export class RangeService extends BasicCrudService<Range, string, RangeDTO>{
 
         //Assign data
         entity.id = dto.id ? dto.id : entity.id;
+        entity.money_limit = dto.money_limit !== undefined && dto.money_limit !== null ? dto.money_limit : entity.money_limit;
         let enterprise = new Enterprise();
         enterprise.id = dto.enterprise;
         entity.enterprise = dto.enterprise ? enterprise : entity.enterprise;

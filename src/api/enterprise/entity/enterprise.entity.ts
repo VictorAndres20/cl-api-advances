@@ -17,6 +17,9 @@ export class Enterprise{
     @Column()
     address: string;
 
+    @Column()
+    date_limit: Date;
+
     @OneToMany(() => User, e => e.enterprise)
     users: User[];
 

@@ -13,6 +13,9 @@ export class Range{
     @Column()
     id: string;
 
+    @Column()
+    money_limit: number;
+
     @ManyToOne(() => Enterprise, e => e.ranges, {
         onDelete: "CASCADE",
         eager: true,

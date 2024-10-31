@@ -37,6 +37,7 @@ export class EnterpriseService extends BasicCrudService<Enterprise, number, Ente
         entity.nit = dto.nit;
         entity.name = dto.name;
         entity.address = dto.address;
+        entity.date_limit = dto.date_limit;
         return entity;
     }
 
