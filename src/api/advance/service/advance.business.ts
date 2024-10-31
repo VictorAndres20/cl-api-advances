@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { Advance } from '../entity/advance.entity';
 import { AdvanceService } from './advance.service';
 import { AdvanceState } from 'src/api/advance_state/entity/advance_state.entity';
@@ -8,6 +8,12 @@ import { EmployeeService } from 'src/api/employee/service/employee.service';
 import { deleteInternalFile, getRandomFileName, readBase64InternalFile } from 'src/_utils/files.util';
 import { buildPDFAdvanceDoc } from 'src/_utils/pdf.util';
 import * as path from 'path';
+import { Employee } from 'src/api/employee/entity/employee.entity';
+
+export interface AdvanceLimitInfo {
+    total: number, 
+    limit: number
+};
 
 @Injectable()
 export class AdvanceBusiness extends AdvanceService{
@@ -77,6 +83,73 @@ export class AdvanceBusiness extends AdvanceService{
         const bytes = readBase64InternalFile(file_path, file_name);
         deleteInternalFile(file_path, file_name);
         return bytes;
+    }
+
+    async getEmployeeAdvanceLimitInfo(employeeId: string): Promise<AdvanceLimitInfo> {
+        const employee = await this.repo.manager.getRepository(Employee)
+            .createQueryBuilder('employee')
+            .innerJoinAndSelect('employee.range', 'range')
+            .innerJoinAndSelect('range.enterprise', 'enterprise')
+            .where('employee.id := employeeId', {employeeId})
+            .getOne();
+        
+        if(!employee) throw new Error('Employee not found for advance limit info');
+        if(!employee.range?.enterprise) throw new Error('Enterprise not found for advance limit info');
+
+        const dateLimit = employee.range?.enterprise?.date_limit;
+
+        if(!dateLimit) throw new Error('Date limit not found for advance limit info');
+
+        /*
+        select SUM(advance.value) from ks.advance advance
+        inner join ks.advance_period period on period."uuid" = advance."period" 
+        inner join ks.employee employee on employee."uuid" = advance.employee 
+        inner join ks."range" r on r."uuid" = employee."range" 
+        inner join ks.enterprise enterprise on enterprise.id = r.enterprise 
+        where advance.declined_date is null
+        and (period.finished_date is null or advance.created_date > '2024-10-30 22:00:00.000')
+        and enterprise.id = 1
+        and employee.id = '0987';
+
+        select * from ks.advance advance
+        inner join ks.advance_period period on period."uuid" = advance."period" 
+        inner join ks.employee employee on employee."uuid" = advance.employee 
+        inner join ks."range" r on r."uuid" = employee."range" 
+        inner join ks.enterprise enterprise on enterprise.id = r.enterprise 
+        where advance.declined_date is null
+        and (period.finished_date is null or advance.created_date > (select e.date_limit from ks.enterprise e where e.id = 1))
+        and enterprise.id = 1
+        and employee.id = '0987';
+        */
+
+        const totalAdvanced = await this.repo
+        .createQueryBuilder('advance')
+        .select('SUM(advance.value)', 'sum')
+        .innerJoin('advance.period', 'period')
+        .innerJoin('advance.employee', 'employee')
+        .innerJoin('employee.range', 'r')
+        .innerJoin('r.enterprise', 'enterprise')
+        .where('advance.declined_date IS NULL')
+        .andWhere(
+          new Brackets(qb => {
+            qb.where('period.finished_date IS NULL')
+              .orWhere('advance.created_date > :createdDate', {
+                createdDate: dateLimit.toISOString(),
+              });
+          }),
+        )
+        .andWhere('enterprise.id = :enterpriseId', { enterpriseId: employee.range?.enterprise?.id })
+        .andWhere('employee.id = :employeeId', { employeeId })
+        .getRawOne();
+
+        console.log(totalAdvanced);
+            
+        if(!totalAdvanced) throw new Error('Total advanced not found for advance limit info')
+
+        return {
+            total: totalAdvanced,
+            limit: employee.range.money_limit
+        }
     }
 
 }
