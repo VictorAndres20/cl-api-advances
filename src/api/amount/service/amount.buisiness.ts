@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Amount } from '../entity/amount.entity';
 import { AmountService } from './amount.service';
+import { AdvanceBusiness } from 'src/api/advance/service/advance.business';
 
 @Injectable()
 export class AmountBusiness extends AmountService{
@@ -10,14 +11,18 @@ export class AmountBusiness extends AmountService{
     constructor(
         @InjectRepository(Amount)
         protected repo: Repository<Amount>,
+        protected advanceService: AdvanceBusiness, 
     ) {super(repo);}
 
     async findAllByEmployee(employee: string): Promise<Amount[]>{
         //return this.findMany({ where: { ranges: { range: { employees: { uuid: employee } } } } });
-        return this.repo.createQueryBuilder('a')
+        const limit = await this.advanceService.getEmloyeeAdvanceLimitValue(employee);
+
+        return await this.repo.createQueryBuilder('a')
         .innerJoinAndSelect('a.range', 'r')
         .innerJoin('r.employees', 'e')
         .where('e.uuid = :employee', { employee })
+        .andWhere('a.value <= :limit', { limit })
         .orderBy('a.value', 'ASC')
         .getMany();
     }

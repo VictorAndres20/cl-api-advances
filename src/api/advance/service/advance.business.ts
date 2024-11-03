@@ -9,6 +9,7 @@ import { deleteInternalFile, getRandomFileName, readBase64InternalFile } from 's
 import { buildPDFAdvanceDoc } from 'src/_utils/pdf.util';
 import * as path from 'path';
 import { Employee } from 'src/api/employee/entity/employee.entity';
+import { AdvanceDTO } from '../entity/advance.dto';
 
 export interface AdvanceLimitInfo {
     total: number, 
@@ -56,6 +57,16 @@ export class AdvanceBusiness extends AdvanceService{
         });
     }
 
+    async create(dto: AdvanceDTO): Promise<Advance> {
+        if(!dto.employee) throw new Error('No employee to create advance');
+
+        const limit = await this.getEmloyeeAdvanceLimitValue(dto.employee);
+
+        if(Number(dto.value) > limit) throw new Error('El valor del anticipo supera el límite establecido');
+
+        return await this.createOne(dto);
+    }
+
     async approve(uuid: string): Promise<Advance> {
         return await this.changeState(uuid, 'APPR');
     }
@@ -90,7 +101,7 @@ export class AdvanceBusiness extends AdvanceService{
             .createQueryBuilder('employee')
             .innerJoinAndSelect('employee.range', 'range')
             .innerJoinAndSelect('range.enterprise', 'enterprise')
-            .where('employee.id := employeeId', {employeeId})
+            .where('employee.uuid = :employeeId', {employeeId})
             .getOne();
         
         if(!employee) throw new Error('Employee not found for advance limit info');
@@ -127,29 +138,31 @@ export class AdvanceBusiness extends AdvanceService{
         .select('SUM(advance.value)', 'sum')
         .innerJoin('advance.period', 'period')
         .innerJoin('advance.employee', 'employee')
-        .innerJoin('employee.range', 'r')
-        .innerJoin('r.enterprise', 'enterprise')
         .where('advance.declined_date IS NULL')
+        .andWhere('employee.uuid = :employeeId', { employeeId })
         .andWhere(
           new Brackets(qb => {
             qb.where('period.finished_date IS NULL')
-              .orWhere('advance.created_date > :createdDate', {
+              .orWhere('advance.created_date >= :createdDate', {
                 createdDate: dateLimit.toISOString(),
               });
           }),
         )
-        .andWhere('enterprise.id = :enterpriseId', { enterpriseId: employee.range?.enterprise?.id })
-        .andWhere('employee.id = :employeeId', { employeeId })
         .getRawOne();
-
-        console.log(totalAdvanced);
             
         if(!totalAdvanced) throw new Error('Total advanced not found for advance limit info')
 
         return {
-            total: totalAdvanced,
+            total: totalAdvanced.sum ?? 0,
             limit: employee.range.money_limit
         }
+    }
+
+    async getEmloyeeAdvanceLimitValue(employeeId: string): Promise<number> {
+        const {total, limit} = await this.getEmployeeAdvanceLimitInfo(employeeId);
+
+        // Look that we are saying in general 5000000 in the top limit
+        return limit === -1 ? 5000000 : limit - total;
     }
 
 }

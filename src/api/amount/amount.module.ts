@@ -5,10 +5,12 @@ import { AmountService } from './service/amount.service';
 import { AmountController } from './controller/amount.controller';
 import { AmountBusiness } from './service/amount.buisiness';
 import { RangeAmountModule } from '../range_amount/range_amount.module';
+import { AdvanceModule } from '../advance/advance.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Amount]),
+        AdvanceModule,
     ],
     controllers: [
         AmountController,

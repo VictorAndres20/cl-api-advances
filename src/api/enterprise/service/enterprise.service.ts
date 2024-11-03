@@ -22,10 +22,24 @@ export class EnterpriseService extends BasicCrudService<Enterprise, number, Ente
 
     findById(id: number): Promise<Enterprise>{
         try{
-            return this.findOne({where: {id:id}});
+            return this.findOne({where: { id }});
         } catch(err){
             throw new Error(err.message);
         }
+    }
+
+    async resetLimitDate(dto: EnterpriseDTO): Promise<Enterprise> {
+        //Validations data
+        if(! dto) throw new Error('DTO empty');
+        if(! dto.id) throw new Error('Entity id null');
+        if(! dto.date_limit) throw new Error('Date limit null');
+
+        const entity = await this.findById(dto.id);
+
+        if(!entity) throw new Error('Entity not found');
+
+        entity.date_limit = dto.date_limit;
+        return await this.repo.save(entity);
     }
 
     buildBaseCreation(dto: EnterpriseDTO): Enterprise{

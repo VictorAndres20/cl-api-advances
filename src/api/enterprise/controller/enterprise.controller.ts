@@ -1,16 +1,27 @@
-import { Controller, Get, Post, Body, HttpException, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpException, Param, UseGuards, Put, Res, HttpStatus } from '@nestjs/common';
 import { HttpResponse } from '../../../commons/responses/http_response';
 import { BasicRestController } from '../../../commons/controllers/rest.controller';
 import { AuthGuard } from '@nestjs/passport';
 import { Enterprise } from '../entity/enterprise.entity';
 import { EnterpriseDTO } from '../entity/enterprise.dto';
 import { EnterpriseService } from '../service/enterprise.service';
+import { Response } from 'express';
 
 @Controller('enterprise')
 @UseGuards(AuthGuard('jwt'))
 export class EnterpriseController extends BasicRestController<Enterprise, number, EnterpriseDTO>{
 
     constructor(protected service: EnterpriseService){super();}
+
+    @Put('reset-limit-date')
+    async resetLimitDate(@Res() res: Response, @Body() dto: EnterpriseDTO): Promise<void> {
+        try{
+            let data = await this.service.resetLimitDate(dto);
+            res.status(HttpStatus.OK).json(new HttpResponse<Enterprise>().setData(data).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Enterprise>().setError(err.message).build(false));
+        }
+    }
 
 }
 

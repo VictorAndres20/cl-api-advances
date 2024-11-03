@@ -5,13 +5,23 @@ import { BasicRestController } from '../../../commons/controllers/rest.controlle
 import { AuthGuard } from '@nestjs/passport';
 import { Advance } from '../entity/advance.entity';
 import { AdvanceDTO } from '../entity/advance.dto';
-import { AdvanceBusiness } from '../service/advance.business';
+import { AdvanceBusiness, AdvanceLimitInfo } from '../service/advance.business';
 
 @Controller('advance')
 @UseGuards(AuthGuard('jwt'))
 export class AdvanceController extends BasicRestController<Advance, string, AdvanceDTO>{
 
     constructor(protected service: AdvanceBusiness){super();}
+
+    @Post('create')
+    override async createOne(@Res() res: Response, @Body() dto: AdvanceDTO): Promise<void> {
+        try{
+            let data = await this.service.create(dto);
+            res.status(HttpStatus.CREATED).json(new HttpResponse<Advance>().setData(data).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Advance>().setError(err.message).build(false));
+        }
+    }
 
     @Get('all/employee/paged/:page/:limit/:employee')
     async findAllByEmployeePaged(
@@ -109,6 +119,19 @@ export class AdvanceController extends BasicRestController<Advance, string, Adva
             res.status(HttpStatus.OK).json(new HttpResponse<Advance>().setList(list).build(true));
         } catch(err){
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Advance>().setError(err.message).build(false));
+        }
+    }
+
+    @Get('limit-info/employee/:id')
+    async getEmployeeLimitInfo(
+        @Res() res: Response,
+        @Param('id') id: string,
+        ): Promise<void> {
+        try{
+            let data = await this.service.getEmployeeAdvanceLimitInfo(id);
+            res.status(HttpStatus.OK).json(new HttpResponse<AdvanceLimitInfo>().setData(data).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<AdvanceLimitInfo>().setError(err.message).build(false));
         }
     }
 
