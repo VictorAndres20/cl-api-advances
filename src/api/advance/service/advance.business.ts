@@ -10,6 +10,7 @@ import { buildPDFAdvanceDoc } from 'src/_utils/pdf.util';
 import * as path from 'path';
 import { Employee } from 'src/api/employee/entity/employee.entity';
 import { AdvanceDTO } from '../entity/advance.dto';
+import { buildISODate } from 'src/_utils/date_format.util';
 
 export interface AdvanceLimitInfo {
     total: number, 
@@ -144,7 +145,7 @@ export class AdvanceBusiness extends AdvanceService{
           new Brackets(qb => {
             qb.where('period.finished_date IS NULL')
               .orWhere('advance.created_date >= :createdDate', {
-                createdDate: dateLimit.toISOString(),
+                createdDate: buildISODate(dateLimit),
               });
           }),
         )
