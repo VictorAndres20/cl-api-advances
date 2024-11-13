@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, HttpException, Param, UseGuards, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpException, Param, UseGuards, Res, HttpStatus, Put } from '@nestjs/common';
 import { HttpResponse } from '../../../commons/responses/http_response';
 import { Response } from 'express';
 import { BasicRestController } from '../../../commons/controllers/rest.controller';
@@ -18,6 +18,26 @@ export class RangeController extends BasicRestController<Range, string, RangeDTO
         try{
             let list = await this.service.findAllByEnterprise(enterprise);
             res.status(HttpStatus.OK).json(new HttpResponse<Range>().setList(list).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Range>().setError(err.message).build(false));
+        }
+    }
+
+    @Put('activate/:id')
+    async activate(@Res() res: Response, @Param('id') id: string): Promise<void> {
+        try{
+            let data = await this.service.activate(id);
+            res.status(HttpStatus.OK).json(new HttpResponse<Range>().setData(data).build(true));
+        } catch(err){
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Range>().setError(err.message).build(false));
+        }
+    }
+
+    @Put('block/:id')
+    async block(@Res() res: Response, @Param('id') id: string): Promise<void> {
+        try{
+            let data = await this.service.block(id);
+            res.status(HttpStatus.OK).json(new HttpResponse<Range>().setData(data).build(true));
         } catch(err){
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(new HttpResponse<Range>().setError(err.message).build(false));
         }

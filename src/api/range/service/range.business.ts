@@ -13,11 +13,26 @@ export class RangeBusiness extends RangeService{
     ) {super(repo);}
 
     async findAllByEnterprise(enterprise: number){
-        return this.findMany({ where: { enterprise: { id: enterprise } }, order: { id: 'ASC' }, relations: { amounts: true } });
+        return this.findMany({ where: { enterprise: { id: enterprise }, active: 1 }, order: { id: 'ASC' }, relations: { amounts: true } });
     }
 
     async findAll(){
-        return this.findMany({ order: { id: 'ASC' }, relations: { amounts: true } });
+        return this.findMany({ where: { active: 1 }, order: { id: 'ASC' }, relations: { amounts: true } });
+    }
+
+    async activate(uuid: string): Promise<Range> {
+        return await this.changeActive(uuid, 1);
+    }
+
+    async block(uuid: string): Promise<Range> {
+        return await this.changeActive(uuid, 0);
+    }
+
+    async changeActive(uuid: string, active: number): Promise<Range> {
+        let entity = await this.findById(uuid);
+        if(entity == null) throw new Error('Entity not found for edition');
+        entity.active = active;
+        return await this.repo.save(entity);
     }
 
 }
