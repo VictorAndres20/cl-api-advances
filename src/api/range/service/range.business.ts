@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Range } from '../entity/range.entity';
 import { RangeService } from './range.service';
+import { Amount } from 'src/api/amount/entity/amount.entity';
 
 @Injectable()
 export class RangeBusiness extends RangeService{
 
     constructor(
         @InjectRepository(Range)
-        protected repo: Repository<Range>
+        protected repo: Repository<Range>,
+        private connection: DataSource,
     ) {super(repo);}
 
     async findAllByEnterprise(enterprise: number){
@@ -31,8 +33,25 @@ export class RangeBusiness extends RangeService{
     async changeActive(uuid: string, active: number): Promise<Range> {
         let entity = await this.findById(uuid);
         if(entity == null) throw new Error('Entity not found for edition');
-        entity.active = active;
-        return await this.repo.save(entity);
+        const queryRunner = this.connection.createQueryRunner();
+        await queryRunner.startTransaction();
+        
+        try {
+            if(active === 0){
+                const amounts = await queryRunner.manager.getRepository(Amount).find({ where: { range: { uuid: entity.uuid } } });
+                if(amounts && amounts?.length > 0) await queryRunner.manager.remove(amounts);
+                entity.money_limit = 0;
+            }
+            entity.active = active;
+            const entityUpdated = await queryRunner.manager.save(entity);
+            await queryRunner.commitTransaction();
+            return entityUpdated;
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw new Error(err.message);
+        } finally {
+            await queryRunner.release();
+        }
     }
 
 }
